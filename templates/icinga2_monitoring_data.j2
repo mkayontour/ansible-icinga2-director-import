@@ -1,0 +1,4 @@
+hostname;address;operatingsystem;monitoring_applications;monitoring_type;state;extra_json
+{% for host in icinga2_monitored_hosts %}
+{{ host }};{{ hostvars[host].monitoring_address }};{{ hostvars[host].ansible_distribution | default('Info Missing')}}-{{ hostvars[host].ansible_distribution_version | default('Facts not gathered')}};{{ hostvars[host].monitoring_applications | default([]) | join(',') }}";{{ hostvars[host].monitoring_type | default('agent') }};{{ hostvars[host].monitoring_state | default('prod') }};{{ hostvars[host].monitoring_json | default({}) | to_json }}
+{% endfor %}

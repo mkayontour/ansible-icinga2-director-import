@@ -1,0 +1,35 @@
+---
+- name: generate monitoring data for icinga2
+  hosts: icinga2-master
+  gather_facts: false
+  vars:
+    icinga2_monitored_hosts: []
+    director_syncrule_id: 1
+    director_importsource_id: 1
+  tasks:
+    - name: gather monitored hosts
+      set_fact:
+        icinga2_monitored_hosts: "{{ icinga2_monitored_hosts + [item] }}"
+      loop: "{{ groups['all'] }}"
+      when: hostvars[item].monitoring_state is defined and hostvars[item].monitoring_state is regex("(prod|dev|test)")
+
+    - name: List of Hosts for the monitoring data
+      debug:
+        var: icinga2_monitored_hosts
+
+    - name: generate monitoring data
+      template:
+        dest: /var/cache/icinga2_csv/icinga2_monitoring_data.csv
+        src: templates/icinga2_monitoring_data.j2
+      register: _data
+
+    - name: import_data (import_ansible_iteos_hosts)
+      command: "icingacli director importsource run --id {{ director_importsource_id }}"
+      register: _import_data
+      when: _data.changed
+
+    - name: sync_data (Sync Host from Ansible CSV)
+      command: "icingacli director syncrule run --id {{ director_syncrule_id }}"
+      when:
+        - _data.changed
+        - '"New data has been imported" in _import_data.stdout'
