@@ -1,0 +1,5 @@
+monitoring_applications:
+  - apache
+monitoring_type: agent
+ansible_distribution: RedHat
+ansible_distribution_version: 7.8

@@ -1,0 +1,4 @@
+client01.mydomain ansible_address=10.10.10.10 monitoring_state=prod
+client02.mydomain ansible_address=10.10.10.11 monitoring_state=dev
+
+icinga2-master ansible_address=10.10.10.9 monitoring_state=prod
