@@ -1,5 +1,8 @@
 monitoring_applications:
   - apache
 monitoring_type: agent
+monitoring_extra_json:
+  disks:
+    disk_partition: /tmp
 ansible_distribution: RedHat
 ansible_distribution_version: 7.8
